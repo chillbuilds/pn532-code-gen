@@ -1,23 +1,4 @@
-module.exports = function(dataArr) {
-    console.log(dataArr)
-    var sectorArr = []
-    var writeDataArr = []
-    var err = false
-    for(var i = 0; i < dataArr.length; i++){
-        if(dataArr[i].sector < 1 || dataArr[i].sector > 15){
-          console.log('Parsing error A.. Code generation aborted')
-          err = true
-        }
-        sectorArr.push(dataArr[i].sector)
-        writeDataArr.push(dataArr[i].writeData)
-    }
-    if(sectorArr.length != dataArr.length){
-      console.log('Parsing error B.. Code generation aborted')
-      err = true
-    }
-    const fs = require('fs')
-
-    var template = `#include <Wire.h>
+#include <Wire.h>
 #include <SPI.h>
 #include <Adafruit_PN532.h>
 
@@ -29,8 +10,8 @@ module.exports = function(dataArr) {
 #define READ_AS_NDEF (1)
 
 Adafruit_PN532 nfc(PN532_SCK, PN532_MISO, PN532_MOSI, PN532_SS);
-int sectors[${dataArr.length}] = { ${sectorArr} };
-const char * writeData[${dataArr.length}] = { ${writeDataArr} };
+int sectors[4] = { 5,1,2,3 };
+const char * writeData[4] = { blood,shit,piss,dink };
 uint8_t ndefprefix = 0;
 void setup(void) {
   Serial.begin(115200);
@@ -76,14 +57,12 @@ void loop(void) {
 
     success = nfc.mifareclassic_WriteNDEFURI(sector, ndefprefix, writeData);
     if (success){
-      Serial.println("Data written to sector \n");
+      Serial.println("Data written to sector 
+");
     }else{
-      Serial.println("Write failed \n");
+      Serial.println("Write failed 
+");
     }
   }
   delay(5000);
-}`
-  if(err == false){
-    fs.writeFileSync('./pn532-node/pn532-node.ino', '')
-    fs.appendFileSync('./pn532-node/pn532-node.ino', template)}
 }

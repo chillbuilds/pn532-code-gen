@@ -22,15 +22,25 @@ function sectorPrompt() {
         type: 'number',
         message: 'Enter sector to write data to (1 - 15)'
     }).then(function(data){
-        if(data.sector < 1 || data.sector > 15){
-            console.log('Provided sector out of bounds');sectorPrompt()}
-        else{sector = data.sector;addQuery()
-        let obj = {writeData: writeData, sector: sector}
-        dataArr.push(obj);}
+        sector = data.sector
+        sectorCheck()
     })
 }
 
+function sectorCheck(){
+    if(sector < 1 || sector > 15){
+        console.log('Provided sector is out of bounds');sectorPrompt();return}
+    if(dataArr.length > 0){
+        for(var i = 0; i < dataArr.length; i++){
+            if(dataArr[i].sector == sector){
+                console.log(`Sector data previously defined as "${dataArr[i].writeData}"`);sectorPrompt();return}
+    }}
+    addQuery()
+}
+
 function addQuery() {
+    let obj = {writeData: writeData, sector: sector}
+    dataArr.push(obj)
     inquirer.prompt({
         name:'add',
         type: 'confirm',
