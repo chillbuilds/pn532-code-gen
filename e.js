@@ -1,6 +1,6 @@
-const fs = require('fs')
 const inquirer = require('inquirer')
-const { generate } = require('rxjs')
+const codeGen = require('./will_modules/code-gen')
+var dataArr = []
 var writeData = ''
 var sector = ''
 
@@ -24,12 +24,22 @@ function sectorPrompt() {
     }).then(function(data){
         if(data.sector < 1 || data.sector > 15){
             console.log('Provided sector out of bounds');sectorPrompt()}
-        else{sector = data.sector;codeGen()}
+        else{sector = data.sector;addQuery()
+        let obj = {writeData: writeData, sector: sector}
+        dataArr.push(obj);}
     })
 }
 
-function codeGen() {
-    
+function addQuery() {
+    inquirer.prompt({
+        name:'add',
+        type: 'confirm',
+        message: 'Update new sector?'
+    }).then(function(data){
+        if(data.add == true){
+            dataPrompt()}
+        else{codeGen(dataArr)}
+        })
 }
 
 dataPrompt()
